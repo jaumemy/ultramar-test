@@ -16,13 +16,21 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
-from django.urls import include
-from django.urls import path
-from .views import HomeView
+from django.urls import include, path
+from rest_framework import routers
+
+from transport import views
+# from .views import HomeView
+
+router = routers.DefaultRouter()
+router.register(r'bookings', views.BookingViewSet, basename='booking')
+router.register(r'vehicles', views.VehicleViewSet, basename='vehicle')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", HomeView.as_view(), name="HomeView"),
+    path('', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # path("", HomeView.as_view(), name="HomeView"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  
 

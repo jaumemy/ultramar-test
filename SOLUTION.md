@@ -1,0 +1,1 @@
+**Here I will describe the app, decisions and technical considerations that I have taken as well as any type of improvements that could be applied
