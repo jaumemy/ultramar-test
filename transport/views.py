@@ -55,7 +55,6 @@ class BookingViewSet(viewsets.ViewSet):
         merged_sheet = pe.Sheet()
         i = 0
         for el in serializer.data:
-            print(el)
             if i == 0:
                 merged_sheet.row += pe.get_book(adict=el)['pyexcel_sheet1']
             else:
@@ -119,7 +118,6 @@ class VehicleViewSet(viewsets.ViewSet):
         merged_sheet = pe.Sheet()
         i = 0
         for el in serializer.data:
-            print(el)
             if i == 0:
                 merged_sheet.row += pe.get_book(adict=el)['pyexcel_sheet1']
             else:
