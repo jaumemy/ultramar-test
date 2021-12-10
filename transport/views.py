@@ -1,6 +1,10 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
+from rest_framework.decorators import action
+
+import pyexcel as pe
 
 from .models import Booking, Vehicle
 from transport.serializers import BookingSerializer, VehicleSerializer
@@ -39,9 +43,36 @@ class BookingViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def list(self, request):
-        queryset = Booking.objects.all().order_by('ship_arrival_date')
+        queryset = Booking.objects.all().order_by('ship_departure_date')
         serializer = BookingSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def export_xls(self, request):
+        queryset = Booking.objects.all().order_by('ship_departure_date')
+        serializer = BookingSerializer(queryset, many=True, context={'request': request})
+
+        merged_sheet = pe.Sheet()
+        i = 0
+        for el in serializer.data:
+            print(el)
+            if i == 0:
+                merged_sheet.row += pe.get_book(adict=el)['pyexcel_sheet1']
+            else:
+                merged_sheet.row += pe.get_book(adict=el)['pyexcel_sheet1'][1]
+            i += 1
+
+        merged_sheet.save_as("files/temp/bookings_list.xls")
+        
+        with open("files/temp/bookings_list.xls", 'rb') as f:
+            data = f.read()
+
+        response = HttpResponse(data, headers= {
+            'Content-Type': 'application/vnd.ms-excel',
+            'Content-Disposition': 'attachment; filename="bookings_list.xls"',
+        })
+
+        return response
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -79,5 +110,34 @@ class VehicleViewSet(viewsets.ViewSet):
         queryset = Vehicle.objects.all().order_by('booking')
         serializer = VehicleSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def export_xls(self, request):
+        queryset = Vehicle.objects.all().order_by('booking')
+        serializer = VehicleSerializer(queryset, many=True, context={'request': request})
+
+        merged_sheet = pe.Sheet()
+        i = 0
+        for el in serializer.data:
+            print(el)
+            if i == 0:
+                merged_sheet.row += pe.get_book(adict=el)['pyexcel_sheet1']
+            else:
+                merged_sheet.row += pe.get_book(adict=el)['pyexcel_sheet1'][1]
+            i += 1
+
+        merged_sheet.save_as("files/temp/vehicles_list.xls")
+        
+        with open("files/temp/vehicles_list.xls", 'rb') as f:
+            data = f.read()
+
+        response = HttpResponse(data, headers= {
+            'Content-Type': 'application/vnd.ms-excel',
+            'Content-Disposition': 'attachment; filename="vehicles_list.xls"',
+        })
+
+        return response
+
+
 
     permission_classes = [permissions.IsAuthenticated]

@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'transport',
     'rest_framework',
+    'pyexcel',
 ]
 
 REST_FRAMEWORK = {

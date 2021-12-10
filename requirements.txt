@@ -4,3 +4,5 @@ djangorestframework==3.12.4
 pylint==2.12.2
 pylint-django==2.4.4
 drf-spectacular==0.21.0
+pyexcel==0.6.7
+pyexcel-xls==0.7.0
