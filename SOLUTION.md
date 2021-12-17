@@ -18,7 +18,7 @@ Make a little application with Vue / ~~React~~ **(Done)**
 
 ## Useful info
 
-Once you have cloned the repo you can do this:
+##### Commands
 
   
 ```bash
@@ -27,7 +27,7 @@ Once you have cloned the repo you can do this:
 
 pip install -r requirements.txt
 
- # Start the server
+# Start the server
 
 python manage.py runserver
 
