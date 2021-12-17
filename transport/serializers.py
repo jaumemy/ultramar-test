@@ -11,8 +11,8 @@ class BookingSerializer(serializers.HyperlinkedModelSerializer):
             'booking_number',
             'loading_port',
             'discharge_port',
-            'ship_arrival_date',
             'ship_departure_date',
+            'ship_arrival_date',
         ]
 
 

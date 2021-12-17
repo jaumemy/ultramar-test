@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema
 
 import pyexcel as pe
 
@@ -11,6 +12,12 @@ from transport.serializers import BookingSerializer, VehicleSerializer
 
 
 class BookingViewSet(viewsets.ViewSet):
+
+    @extend_schema(
+        request=[
+          BookingSerializer
+        ],
+    )
 
     def create(self, request):
         serializer = BookingSerializer(data=request.data, context={'request': request})
@@ -77,6 +84,12 @@ class BookingViewSet(viewsets.ViewSet):
 
 
 class VehicleViewSet(viewsets.ViewSet):
+
+    @extend_schema(
+        request=[
+          VehicleSerializer
+        ],
+    )
 
     def create(self, request):
         serializer = VehicleSerializer(data=request.data, context={'request': request})

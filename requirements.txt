@@ -3,6 +3,7 @@ django-debug-toolbar==3.2.2
 djangorestframework==3.12.4
 pylint==2.12.2
 pylint-django==2.4.4
-drf-spectacular==0.21.0
 pyexcel==0.6.7
 pyexcel-xls==0.7.0
+drf-spectacular==0.21.0
+pytest==6.2.5

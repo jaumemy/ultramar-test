@@ -1,4 +1,5 @@
 {% extends "templates/base.html" %}
+{% load static %}
 
 {% block title %}
 Hello world
@@ -6,12 +7,210 @@ Hello world
 
 {% block content %}
 
-<div class="container">
-  <div class="md-12">
-    <h1>Hello world</h1>
-  </div>
-  <div class="md-12">
-    {% lorem 5 p random  %}
-  </div>
+
+
+<div class="container" id="welcome">
+
+  <br>
+  {% if request.user.is_authenticated %}
+    <div>[[ welcome ]]</div>
+  {% else %}
+    <div> <p> Please, log in. </p> </div>
+  {% endif %}
+  <br>
+
 </div>
+
+
+
+<div class="container" id="bookings">
+
+  {% if request.user.is_authenticated %}
+
+  <h2 style="display: inline-block">Bookings</h2>
+  <button v-on:click="exportXls($event)" class="btn btn-outline-secondary btn-xs"> Export xls </button>
+  <ol>
+    <li v-for="booking in bookings">
+      <span> [[booking.loading_port]]-[[booking.discharge_port]] ([[booking.ship_departure_date]] to [[booking.ship_arrival_date]]) </span>
+      <button v-on:click="detail([[booking.booking_number]], $event)" class="btn btn-outline-info btn-xs"> + </button>
+    </li>
+  </ol>
+
+
+  <div class="container" v-if="bookingDetail">
+
+    <h5 style="display: inline-block">Booking Details</h5>
+    <button v-on:click="clear($event)" class="btn btn-outline-info btn-xs"> - </button>
+    <ul>
+      <li v-for="(val, key) in bookingDetail">
+        <span v-if = "key === 'booking_vehicles' " >
+          <span>booking_vehicles:</span>
+          <ul>
+            <li v-for="vehicle in val">
+              <span> [[vehicle.make]] [[vehicle.model]] ([[(vehicle.vin)]]) </span>
+            </li>
+          </ul>
+        </span>
+        <span v-else>
+          [[key]]: [[val]]
+        </span>
+      </li>
+    </ul>
+  
+  </div>
+
+  {% endif %}
+
+</div>
+
+
+
+
+<div class="container" id="vehicles">
+
+  {% if request.user.is_authenticated %}
+
+  <h2 style="display: inline-block">Vehicles</h2>
+  <button v-on:click="exportXls($event)" class="btn btn-outline-secondary btn-xs"> Export xls </button>
+  <ol>
+    <li v-for="vehicle in vehicles">
+      <span> [[vehicle.make]] [[vehicle.model]] ([[(vehicle.vin)]]) </span>
+      <button v-on:click="detail([[vehicle.vin]], $event), bookingDetail([[vehicle.booking]], $event)" class="btn btn-outline-info btn-xs"> + </button>
+    </li>
+  </ol>
+
+    
+
+  <div class="container" v-if="vehicleDetail">
+
+    <h5 style="display: inline-block">Vehicle Details</h5>
+    <button v-on:click="clear($event)" class="btn btn-outline-info btn-xs"> - </button>
+    <ul>
+      <li v-for="(val, key) in vehicleDetail">
+        <span v-if = "key === 'booking' ">
+          booking: [[vehicleBookingDetail.loading_port]]-[[vehicleBookingDetail.discharge_port]] ([[vehicleBookingDetail.ship_departure_date]] to [[vehicleBookingDetail.ship_arrival_date]])
+        </span>
+        <span v-else>
+          [[key]]: [[val]]
+        </span>
+      </li>
+    </ul>
+
+  </div>
+    
+
+  {% endif %}
+
+
+
+</div>
+
+
+
+
+{{ username|json_script:"username" }}
+
+<script>
+
+  var username = JSON.parse(document.getElementById('username').textContent)
+
+
+  var welcomeApp = new Vue({
+    delimiters: ["[[", "]]"],
+    el: '#welcome',
+    data: {
+      welcome: 'Hello ' + username,
+    },
+  })
+
+
+  var bookingsApp = new Vue({
+    delimiters: ["[[", "]]"],
+    el: '#bookings',
+    data () {
+      return {
+        bookings: null,
+        bookingDetail: null,
+      }
+    },
+    mounted () {
+    axios
+      .get('http://127.0.0.1:8000/api/bookings/?format=json')
+      .then(response => (this.bookings = response['data']))
+    },
+    methods: {
+      detail: async function (bookingNumber, event) {
+        await axios
+          .get(`http://127.0.0.1:8000/api/bookings/${bookingNumber}/?format=json`)
+          .then(response => (this.bookingDetail = response['data']))
+      },
+      clear : function (event) {
+        this.bookingDetail = null
+      },
+      exportXls : function (event) {
+        axios
+          .get('http://127.0.0.1:8000/api/bookings/export_xls', {responseType: 'blob'})
+          .then(response => (
+              this.fileURL = window.URL.createObjectURL(new Blob([response.data])),
+              this.fileLink = document.createElement('a'),
+              this.fileLink.href = this.fileURL,
+              this.fileLink.setAttribute('download', 'bookings_list.xls'),
+              document.body.appendChild(this.fileLink),
+              this.fileLink.click()))
+      },
+    },
+  })
+
+
+  var vehiclesApp = new Vue({
+    delimiters: ["[[", "]]"],
+    el: '#vehicles',
+    data () {
+      return {
+        vehicles: null,
+        vehicleDetail: null,
+        vehicleBookingDetail: null
+      }
+    },
+    mounted () {
+      axios
+        .get('http://127.0.0.1:8000/api/vehicles/?format=json')
+        .then(response => (this.vehicles = response['data']))
+    },
+    methods: {
+      detail: async function (vin, event) {
+        await axios
+          .get(`http://127.0.0.1:8000/api/vehicles/${vin}/?format=json`)
+          .then(response => (this.vehicleDetail = response['data']))
+      },
+      clear : function (event) {
+        this.vehicleDetail = null
+      },
+      bookingDetail: async function (bookingUrl, event) {
+        console.log(bookingUrl[0][0])
+        if (bookingUrl[0][0] != null) {
+          await axios
+            .get(`${bookingUrl[0]}`)
+            .then(response => (this.vehicleBookingDetail = response['data']))
+        } else {
+          this.vehicleBookingDetail = {'loading_port':'no', 'discharge_port':'booking', 'ship_departure_date': '', 'ship_arrival_date':''}
+        }
+      },
+      exportXls : function (event) {
+        axios
+          .get('http://127.0.0.1:8000/api/vehicles/export_xls', {responseType: 'blob'})
+          .then(response => (
+              this.fileURL = window.URL.createObjectURL(new Blob([response.data])),
+              this.fileLink = document.createElement('a'),
+              this.fileLink.href = this.fileURL,
+              this.fileLink.setAttribute('download', 'vehicles_list.xls'),
+              document.body.appendChild(this.fileLink),
+              this.fileLink.click()))
+      },
+    }
+  })
+
+</script>
+
+
 {% endblock %}

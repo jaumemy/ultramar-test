@@ -20,17 +20,20 @@ from django.urls import include, path
 from rest_framework import routers
 
 from transport import views
-# from .views import HomeView
+from .views import HomeView
+from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 
 router = routers.DefaultRouter()
 router.register(r'bookings', views.BookingViewSet, basename='booking')
 router.register(r'vehicles', views.VehicleViewSet, basename='vehicle')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    path("", HomeView, name="HomeView"),
+    path('admin/', admin.site.urls, name="admin"),
+    path('api/', include(router.urls), name="api"),
+    path('schema/', SpectacularAPIView.as_view(), name="schema"),
+    path('docs/', SpectacularSwaggerView.as_view(url_name="schema"), name="docs"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    # path("", HomeView.as_view(), name="HomeView"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
  
 
