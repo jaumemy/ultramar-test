@@ -4,7 +4,7 @@
 
 Make this app reusable **(Done)**
 
-Make tests (backend **(Done)** / ~~frontend~~)
+Make tests (backend / ~~frontend~~) **(Done)** 
 
 Make export results to XLS / PDF **(Done)** ~~or import XLS files~~
 
