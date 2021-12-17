@@ -40,16 +40,16 @@ python manage.py test
 
 ##### Urls
 
-To see the **front end** go to [http://localhost:8000/](http://localhost:8000/)              
+-To see the **front end** go to [http://localhost:8000/](http://localhost:8000/)              
 _*At the time it only lets you read data and download files_        
 
-To  **login** go to [http://localhost:8000/admin](http://localhost:8000/admin)            
+- To  **login** go to [http://localhost:8000/admin](http://localhost:8000/admin)            
 _*At the time no login feature has been implemented in the custom front end_              
 _*You can use the test user, username=test.user,  password=ultramar_           
 
-To see the **django rest framework api** go to [http://localhost:8000/api](http://localhost:8000/api)            
+- To see the **django rest framework api** go to [http://localhost:8000/api](http://localhost:8000/api)            
 
-To see a basic **swagger ui** go to [http://localhost:8000/docs](http://localhost:8000/docs)              
+- To see a basic **swagger ui** go to [http://localhost:8000/docs](http://localhost:8000/docs)              
 
 
 
