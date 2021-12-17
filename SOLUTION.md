@@ -40,7 +40,7 @@ python manage.py test
 
 ##### Urls
 
--To see the **front end** go to [http://localhost:8000/](http://localhost:8000/)              
+- To see the **front end** go to [http://localhost:8000/](http://localhost:8000/)              
 _*At the time it only lets you read data and download files_        
 
 - To  **login** go to [http://localhost:8000/admin](http://localhost:8000/admin)            
