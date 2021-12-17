@@ -4,7 +4,7 @@
 
 Make this app reusable **(Done)**
 
-Make tests (backens **(Done)** / ~~frontend~~)
+Make tests (backend **(Done)** / ~~frontend~~)
 
 Make export results to XLS / PDF **(Done)** ~~or import XLS files~~
 
@@ -45,7 +45,7 @@ _*At the time it only lets you read data and download files_
 
 To  **login** go to [http://localhost:8000/admin](http://localhost:8000/admin)            
 _*At the time no login feature has been implemented in the custom front end_              
-_You can use the test user, username=test.user,  password=ultramar_           
+_*You can use the test user, username=test.user,  password=ultramar_           
 
 To see the **django rest framework api** go to [http://localhost:8000/api](http://localhost:8000/api)            
 
